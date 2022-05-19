@@ -2,12 +2,12 @@ package edu.hitsz.application;
 
 import android.content.Context;
 
-public class HardGame extends Game{
+public class HardGame extends Game {
     public HardGame(String grade , boolean musicOpenFlag, Context context, Object lock) {
         super( context);
         setEnemyMaxNumber(8);
-        setEnemySpeedX(0,10,10);
-        setEnemySpeedY(10,10,0);
+        setEnemySpeedX(0,20,30);
+        setEnemySpeedY(20,20,0);
         setEnemyHp(30,60,300);
         setCycleDurationOfEnemyGeneration(400);
         setEliteEnemyPossibility(0.5);

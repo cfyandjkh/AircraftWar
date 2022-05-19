@@ -1,5 +1,4 @@
 package edu.hitsz.supply;
-import edu.hitsz.application.Game;
 import edu.hitsz.basic.AbstractFlyingObject;
 import edu.hitsz.aircraft.HeroAircraft;
 public abstract class AbstractSupply extends AbstractFlyingObject{

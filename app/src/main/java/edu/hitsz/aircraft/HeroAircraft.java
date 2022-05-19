@@ -27,7 +27,7 @@ public class HeroAircraft extends AbstractAircraft {
     /**
      * 生成heroaircraft
      */
-    static private HeroAircraft heroAircraft;
+    static private HeroAircraft heroAircraft=null;
 
     /**
      * 构造方式private，符合单例准则

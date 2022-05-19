@@ -17,7 +17,7 @@ public class StraightShoot implements InterfaceShoot{
         int x = aircraft.getLocationX();
         int y = aircraft.getLocationY() +aircraft.getDirection()*2;
         int speedx = 0;
-        int speedy = aircraft.getSpeedY() + aircraft.getDirection()*5;
+        int speedy = aircraft.getSpeedY() + aircraft.getDirection()*20;
         Basebullet abstractBullet;
         for(int i=0; i<aircraft.getShootNum(); i++){
             if(aircraft instanceof HeroAircraft) {

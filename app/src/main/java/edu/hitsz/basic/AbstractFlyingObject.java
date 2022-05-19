@@ -1,6 +1,7 @@
 package edu.hitsz.basic;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.example.aircraftwar.MainActivity;
 

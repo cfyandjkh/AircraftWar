@@ -2,9 +2,8 @@ package edu.hitsz.supply;
 import edu.hitsz.aircraft.AbstractAircraft;
 import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.application.Game;
-import edu.hitsz.basic.AbstractFlyingObject;
+
 import edu.hitsz.bullet.Basebullet;
-import edu.hitsz.musicthread.MusicThread;
 import edu.hitsz.subscribe.Subscriber;
 
 import java.util.ArrayList;

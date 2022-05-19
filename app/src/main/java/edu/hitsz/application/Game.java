@@ -7,9 +7,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
+import java.util.List;
 import androidx.annotation.NonNull;
 
 import com.example.aircraftwar.MainActivity;
@@ -18,13 +19,13 @@ import com.example.aircraftwar.R;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.Basebullet;
 import edu.hitsz.basic.AbstractFlyingObject;
-import edu.hitsz.musicthread.MusicThread;
+import edu.hitsz.bullet.EnemyBullet;
+import edu.hitsz.bullet.HeroBullet;
+import edu.hitsz.bullet.Missile;
 import edu.hitsz.supply.*;
 
-import javax.swing.*;
 
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -33,7 +34,7 @@ import java.util.concurrent.*;
  * @author hitsz
  */
 public  class Game extends SurfaceView implements
-        SurfaceHolder.Callback {
+        SurfaceHolder.Callback,Runnable {
 
     private int backGroundTop = 0;
 
@@ -47,7 +48,7 @@ public  class Game extends SurfaceView implements
      */
     private int timeInterval = 40;
 
-    private static final HeroAircraft heroAircraft= HeroAircraft.getInstance();;
+    private  HeroAircraft heroAircraft;
     private static final List<AbstractAircraft> enemyAircrafts= new LinkedList<>();
     private static final List<Basebullet> heroBullets= new LinkedList<>();
     private static final List<Basebullet> enemyBullets= new LinkedList<>();
@@ -66,16 +67,16 @@ public  class Game extends SurfaceView implements
     /**
      * 不同难度下设置不同的血量和速度
      * 英雄机子弹伤害为30，因此：
-     * 简单模式下：普通敌机X和Y速度为0,5，精英敌机X和Y速度为5,5，血量分别为30,30，不产生BOSS机
-     * 普通模式下：普通敌机X和Y速度为0,10，精英敌机X和Y速度为10,10，BOSS机的X和Y速度为10,0，三者血量分别为30,60,200
-     * 困难模式下：普通敌机X和Y速度为0,10，精英敌机X和Y速度为10,10，BOSS机的X和Y速度为10,0，三者血量分别为30,60,300,最高到达500滴血
+     * 简单模式下：普通敌机X和Y速度为0,10，精英敌机X和Y速度为10,10，血量分别为30,30，不产生BOSS机
+     * 普通模式下：普通敌机X和Y速度为0,15，精英敌机X和Y速度为15,15，BOSS机的X和Y速度为20,0，三者血量分别为30,60,200
+     * 困难模式下：普通敌机X和Y速度为0,20，精英敌机X和Y速度为20,20，BOSS机的X和Y速度为30,0，三者血量分别为30,60,300,最高到达500滴血
      * 对于普通模式和困难模式，敌机属性每半分钟提高0.02，最高到达2倍。
      */
     private static int MOB_ENEMY_SPEEDX=0;
-    private static int ELITE_ENEMY_SPEEDX=5;
-    private static int BOSS_ENEMY_SPEEDX=5;
-    private static int MOB_ENEMY_SPEEDY=5;
-    private static int ELITE_ENEMY_SPEEDY=5;
+    private static int ELITE_ENEMY_SPEEDX=10;
+    private static int BOSS_ENEMY_SPEEDX=10;
+    private static int MOB_ENEMY_SPEEDY=10;
+    private static int ELITE_ENEMY_SPEEDY=10;
     private static int BOSS_ENEMY_SPEEDY=0;
     private static int MOB_ENEMY_HP=30;
     private static int ELITE_ENEMY_HP=30;
@@ -153,6 +154,7 @@ public  class Game extends SurfaceView implements
         mSurfaceHolder = this.getHolder();
         mSurfaceHolder.addCallback(this);
         loading_img();
+        heroAircraft= HeroAircraft.getInstance();
         this.setFocusable(true);
 //        this.grade=grade;
 //        this.lock=lock;
@@ -162,7 +164,7 @@ public  class Game extends SurfaceView implements
          * 关于alibaba code guide：可命名的 ThreadFactory 一般需要第三方包
          * apache 第三方库： org.apache.commons.lang3.concurrent.BasicThreadFactory
          */
-        this.executorService=Executors.newScheduledThreadPool(5);
+        this.executorService=Executors.newScheduledThreadPool(1);
 
     }
 
@@ -490,7 +492,7 @@ public  class Game extends SurfaceView implements
      * 是否会产生导弹
      */
      public  boolean ifMissileGenerates(){
-         return false;
+         return true;
      }
 
     /**
@@ -632,6 +634,17 @@ public  class Game extends SurfaceView implements
         ImageManager.Fire_Supply_IMAGE=BitmapFactory.decodeResource(getResources(),R.drawable.prop_fire);
         ImageManager.Bomb_Supply_IMAGE=BitmapFactory.decodeResource(getResources(),R.drawable.prop_bomb);
         ImageManager.MISSILE_IMAGE=BitmapFactory.decodeResource(getResources(),R.drawable.missile);
+
+        ImageManager.CLASSNAME_IMAGE_MAP.put(HeroAircraft.class.getName(), ImageManager.HERO_IMAGE);
+        ImageManager.CLASSNAME_IMAGE_MAP.put(MobEnemy.class.getName(), ImageManager.MOB_ENEMY_IMAGE);
+        ImageManager. CLASSNAME_IMAGE_MAP.put(EliteEnemy.class.getName(), ImageManager.Elite_ENEMY_IMAGE);
+        ImageManager.CLASSNAME_IMAGE_MAP.put(BossEnemy.class.getName(), ImageManager.Boss_ENEMY_IMAGE);
+        ImageManager. CLASSNAME_IMAGE_MAP.put(HeroBullet.class.getName(), ImageManager.HERO_BULLET_IMAGE);
+        ImageManager.CLASSNAME_IMAGE_MAP.put(EnemyBullet.class.getName(), ImageManager.ENEMY_BULLET_IMAGE);
+        ImageManager. CLASSNAME_IMAGE_MAP.put(BloodSupply.class.getName(), ImageManager.Blood_Supply_IMAGE);
+        ImageManager. CLASSNAME_IMAGE_MAP.put(FireSupply.class.getName(), ImageManager.Fire_Supply_IMAGE);
+        ImageManager.CLASSNAME_IMAGE_MAP.put(BombSupply.class.getName(), ImageManager.Bomb_Supply_IMAGE);
+        ImageManager. CLASSNAME_IMAGE_MAP.put(Missile.class.getName(), ImageManager.MISSILE_IMAGE);
     }
 
     private void paintImageWithPositionRevised(Canvas canvas, List<? extends AbstractFlyingObject> objects){
@@ -649,19 +662,20 @@ public  class Game extends SurfaceView implements
 
     private void paintScoreAndLife(Canvas canvas) {
         Paint paint=new Paint();
-        int x = 10;
-        int y = 25;
-        paint.setColor(Color.rgb(167,116,80));
-        paint.setTextSize(22);
+        int x = 50;
+        int y = 150;
+        paint.setColor(Color.rgb(176,7,14));
+        paint.setTextSize(100);
         paint.setTypeface(Typeface.SANS_SERIF);
         canvas.drawText("SCORE:" + this.score, x, y,paint);
-        y = y + 20;
+        y = y + 100;
         canvas.drawText("LIFE:" + this.heroAircraft.getHp(),x, y,paint);
     }
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        action();
+        new Thread(this).start();
+
     }
     @Override
     public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
@@ -671,6 +685,11 @@ public  class Game extends SurfaceView implements
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
         gameOverFlag=true;
+    }
+
+    @Override
+    public void run() {
+        action();
     }
 }
 

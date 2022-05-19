@@ -16,7 +16,7 @@ public class DisperseShoot implements InterfaceShoot {
         List<Basebullet> res = new LinkedList<>();
         int x = aircraft.getLocationX();
         int y = aircraft.getLocationY() + aircraft.getDirection()* 2;
-        int speedy = aircraft.getSpeedY() + aircraft.getDirection() * 5;
+        int speedy = aircraft.getSpeedY() + aircraft.getDirection() * 20;
         Basebullet abstractBullet;
         if(aircraft.getShootNum()>1) {
             for (int i = 0; i < aircraft.getShootNum(); i++) {

@@ -2,13 +2,13 @@ package edu.hitsz.application;
 
 import android.content.Context;
 
-public class SimpleGame extends Game{
+public class SimpleGame extends Game {
 
     public SimpleGame(String grade , boolean musicOpenFlag, Context context, Object lock) {
         super( context);
         setEnemyMaxNumber(6);
-        setEnemySpeedX(0,10,10);
-        setEnemySpeedY(10,10,0);
+        setEnemySpeedX(0,15,20);
+        setEnemySpeedY(15,15,0);
         setEnemyHp(30,60,200);
         setCycleDurationOfEnemyGeneration(500);
         setEliteEnemyPossibility(0.33);
